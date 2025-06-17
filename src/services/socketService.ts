@@ -269,13 +269,13 @@ export const socketService = {
   },
 
   // Evocation activation
-  activateEvocation: (evocationId: string) => {
+  activateEvocation: (evocationId: string, params: any = {}) => {
     if (!evocationId || typeof evocationId !== 'string') {
       console.error('Client validation failed for activateEvocation: invalid evocation ID');
       return false;
     }
-    
-    socket.emit('activate-evocation', { evocationId });
+
+    socket.emit('activate-evocation', { evocationId, params });
     return true;
   },
 

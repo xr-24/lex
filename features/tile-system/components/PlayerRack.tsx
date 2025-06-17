@@ -32,6 +32,8 @@ export const PlayerRack: React.FC<PlayerRackProps> = ({
   const [selectedForExchange, setSelectedForExchange] = useState<Set<string>>(new Set());
   const [powerUpModalOpen, setPowerUpModalOpen] = useState(false);
   const [activatingPowerUpType, setActivatingPowerUpType] = useState<PowerUpType | null>(null);
+  const [evocationModalOpen, setEvocationModalOpen] = useState(false);
+  const [activatingEvocation, setActivatingEvocation] = useState<Evocation | null>(null);
   const [showSpells, setShowSpells] = useState(false);
   
   const player = useGameStore((state) => state.players.find(p => p.id === playerId));
@@ -166,10 +168,14 @@ export const PlayerRack: React.FC<PlayerRackProps> = ({
 
     // Play evocation sound
     soundService.playEvocation(evocation.type);
-
-    const success = socketService.activateEvocation(evocation.id);
-    if (!success) {
-      console.error('Failed to activate evocation');
+    if (evocation.type === 'DANTALION') {
+      setActivatingEvocation(evocation);
+      setEvocationModalOpen(true);
+    } else {
+      const success = socketService.activateEvocation(evocation.id);
+      if (!success) {
+        console.error('Failed to activate evocation');
+      }
     }
   };
 
@@ -263,6 +269,19 @@ export const PlayerRack: React.FC<PlayerRackProps> = ({
     setActivatingPowerUpType(null);
   };
 
+  const handleEvocationModalConfirm = (selection: any) => {
+    if (activatingEvocation) {
+      socketService.activateEvocation(activatingEvocation.id, selection);
+    }
+    setEvocationModalOpen(false);
+    setActivatingEvocation(null);
+  };
+
+  const handleEvocationModalClose = () => {
+    setEvocationModalOpen(false);
+    setActivatingEvocation(null);
+  };
+
   const getOpponent = () => {
     return players.find(p => p.id !== playerId);
   };
@@ -342,6 +361,8 @@ export const PlayerRack: React.FC<PlayerRackProps> = ({
                 tile.isPowerUp ? 'power-up-tile' : ''
               } ${
                 tile.isBlank ? 'blank-tile' : ''
+              } ${
+                player.silencedTiles?.includes(tile.id) ? 'silenced' : ''
               } ${
                 isAIPlayer() && !tile.isPowerUp ? 'ai-tile' : ''
               }`}
@@ -577,6 +598,19 @@ export const PlayerRack: React.FC<PlayerRackProps> = ({
         opponent={getOpponent()}
         board={board}
       />
+
+      {/* Evocation Modal (reuse PowerUpModal for selection) */}
+      {activatingEvocation && (
+        <PowerUpModal
+          isOpen={evocationModalOpen}
+          powerUpType="DUPLICATE"
+          onClose={handleEvocationModalClose}
+          onConfirm={handleEvocationModalConfirm}
+          player={player}
+          opponent={getOpponent()}
+          board={board}
+        />
+      )}
     </div>
   );
 };
