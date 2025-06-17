@@ -110,7 +110,7 @@ export const PowerUpModal: React.FC<PowerUpModalProps> = ({
               {opponent?.tiles.map((tile) => (
                 <div
                   key={tile.id}
-                  className={`tile-option ${selectedTiles.includes(tile.id) ? 'selected' : ''}`}
+                  className={`tile-option ${selectedTiles.includes(tile.id) ? 'selected' : ''} ${opponent?.silencedTiles?.includes(tile.id) ? 'silenced' : ''}`}
                   onClick={() => handleTileSelection(tile.id)}
                 >
                   {tile.letter}
@@ -131,7 +131,7 @@ export const PowerUpModal: React.FC<PowerUpModalProps> = ({
               {opponent?.tiles.map((tile) => (
                 <div
                   key={tile.id}
-                  className={`tile-option ${selectedTiles.includes(tile.id) ? 'selected' : ''}`}
+                  className={`tile-option ${selectedTiles.includes(tile.id) ? 'selected' : ''} ${opponent?.silencedTiles?.includes(tile.id) ? 'silenced' : ''}`}
                   onClick={() => handleTileSelection(tile.id)}
                 >
                   {tile.letter}
@@ -151,7 +151,7 @@ export const PowerUpModal: React.FC<PowerUpModalProps> = ({
               {player.tiles.filter(tile => !tile.isPowerUp).map((tile) => (
                 <div
                   key={tile.id}
-                  className={`tile-option ${selectedTiles.includes(tile.id) ? 'selected' : ''}`}
+                  className={`tile-option ${selectedTiles.includes(tile.id) ? 'selected' : ''} ${player.silencedTiles?.includes(tile.id) ? 'silenced' : ''}`}
                   onClick={() => handleTileSelection(tile.id)}
                 >
                   {tile.letter}
